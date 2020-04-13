@@ -10,10 +10,11 @@ public class TestCard {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Card jPanel = new Card("hearts", 2);
+        jPanel.flipToBack();
         frame.add(jPanel);
         frame.setBackground(Color.WHITE);
         frame.pack();
-        frame.setSize(600, 400);
+        frame.setSize(100, 145);
         frame.setVisible(true);
     }
 

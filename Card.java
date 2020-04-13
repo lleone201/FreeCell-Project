@@ -78,6 +78,14 @@ public class Card extends JPanel {
         return this.value;
     }
 
+    public void fliptoFront() {
+        this.faceDown = false;
+    }
+
+    public void flipToBack() {
+        this.faceDown = true;
+    }
+
     public String toString() {
         return this.getValAsString() + " of " + this.suit;
     }

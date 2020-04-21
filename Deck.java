@@ -5,6 +5,25 @@ public class Deck {
     // Deck wil need cards obviously
     ArrayList<Card> cards;
 
+    public int getDeckSize() {
+        // Returns the current number of cards left in the deck
+        return cards.size();
+    }
+
+    public static void shuffleDeck(ArrayList<Card> cards) {
+        // Uses the Collections.shuffle method to shuffle up the deck and get the cards
+        // in randomized order
+        Collections.shuffle(cards);
+    }
+
+    public Card drawCard() {
+        // Draws a card from the deck and then removes it from the cards in the deck.
+        Card drawn = cards.get(0);
+        cards.remove(0);
+
+        return drawn;
+    }
+
     // Deck constructor
     public Deck() {
         // Create 52 cards for the deck and shuffle them
@@ -24,26 +43,7 @@ public class Deck {
                 cards.add(new Card(suit, i));
             }
         }
-        cards.shuffleDeck();
-    }
-
-    public int getDeckSize() {
-        // Returns the current number of cards left in the deck
-        return cards.size();
-    }
-
-    public void shuffleDeck() {
-        // Uses the Collections.shuffle method to shuffle up the deck and get the cards
-        // in randomized order
-        Collections.shuffle(cards);
-    }
-
-    public Card drawCard() {
-        // Draws a card from the deck and then removes it from the cards in the deck.
-        Card drawn = cards.get(0);
-        cards.remove(0);
-
-        return drawn;
+        shuffleDeck(cards);
     }
 
 }

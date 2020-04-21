@@ -86,7 +86,10 @@ public class Card extends JPanel {
         this.faceDown = true;
     }
 
-    public String toString() {
-        return this.getValAsString() + " of " + this.suit;
+    public String toString() {		//The first card that is added to the stack is blank rather than having a particular suit
+		if(this.suit == "blank")
+			return "blank";
+		else
+			return this.getValAsString() + " of " + this.suit;
     }
 }

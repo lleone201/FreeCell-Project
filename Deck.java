@@ -39,8 +39,8 @@ public class Deck {
             } else if (i == 4) {
                 suit = "diamonds";
             }
-            for (int j = 2; j <= 14; ++i) {
-                cards.add(new Card(suit, i));
+            for (int j = 2; j <= 14; ++j) {
+                cards.add(new Card(suit, j));
             }
         }
         shuffleDeck(cards);

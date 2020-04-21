@@ -8,7 +8,10 @@ CLASSES = \
 	Card.java \
 	TestCard.java \
 	Deck.java \
-	TestDeck.java
+	TestDeck.java \
+	FreeCellGUI.java \
+	FreeCell.java \
+	CardStack.java
 
 default: classes
 

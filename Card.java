@@ -85,6 +85,10 @@ public class Card extends JPanel {
     public void flipToBack() {
         this.faceDown = true;
     }
+	
+	public boolean getColor() {
+		return isBlack;
+	}
 
     public String toString() {		//The first card that is added to the stack is blank rather than having a particular suit
 		if(this.suit == "blank")

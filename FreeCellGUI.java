@@ -46,7 +46,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		//Adds the bottom menu bar for getting help on playing the game and restarting the game
 		String[] theOptions = new String[]{"Help", "New Game"};
 		options = new JButton[2];
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 2; i++)
 		{
 			options[i] = new JButton(theOptions[i]);
 		}
@@ -110,7 +110,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 		deck = new Deck();
-		setMinimumSize(new Dimension(600, 900));
+		setMinimumSize(new Dimension(900, 600));
 		setBackground(new Color(30, 80, 25));
 		gameStart();
 	}
@@ -126,7 +126,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	public void gameStart() //Called to start the game, whether for the first time or after a reset
 	{
 		int j;
-		CardStack s;
+		CardStack s = new CardStack(0, 120);
 		topRow.removeAll();
 		columns.removeAll();
 		
@@ -146,6 +146,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			for(; j > 0; j--)
 			{
 				Card card = deck.drawCard();
+				System.out.printf("%s ", card.toString());
 				s.add(card);
 			}
 			playingField.add(s);

@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.Point;
 import java.awt.Graphics;
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Image;
 import java.awt.Desktop;
@@ -42,6 +43,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	CardStack dragged;			//When a pile is dragged around, it is added to this
 	JLayeredPane jlp;
 	Point offset;				//Helps properly align where the card will be dragged to
+	Card tCard;
 	
 	public FreeCellGUI()
 	{
@@ -160,6 +162,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		for(int i = 0; i < 8; i++)
 		{
 			s[i] = new CardStack(0, 120);
+			s[i].addCard(new Card("blank", 0));
 			if(i < 4)
 				temp = 7;
 			else
@@ -174,7 +177,6 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			}
 			playingField.add(s[i]);
 			columns.add(s[i]);
-			System.out.println(s[i]);
 		}
 		
  		for(int i = 0; i < 8; i++)
@@ -184,7 +186,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			else
 				s[i] = new CardStack(2, 120);
 			
-			s[i].add(new Card("blank", 2));
+			s[i].addCard(new Card("blank", 0));
 			
 			if(i < 4)
 				freeCells.add(s[i]);
@@ -193,6 +195,9 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			
 			topRow.add(s[i]);
 		}
+		
+/* 		for(int i = 0; i < 8; i++)
+			topRow.add(new Card("blank", 0)); */
 		
 		validate();
 	}
@@ -241,29 +246,61 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		if(e.getComponent() instanceof Card)
 		{
 			Card c = (Card)e.getComponent();
-			
-			if(playingField.get(playingField.indexOf(c.getParent())).getLayer(c) != JLayeredPane.DRAG_LAYER)
-				return;
-			CardStack s = (CardStack)c.getParent();
-			if(s.isEmpty() || s.stackType == 2)
-				return;
-			
-			dragged = new CardStack(s.stackType, s.width);
-			dragged.addCard(c);
-			s.removeCard(c);
-			dragged.old = s;
-			playingField.add(dragged);
-			
-			jlp.add(dragged, JLayeredPane.DRAG_LAYER);
-			
-			Point pos = getLocationOnScreen();
 			offset = e.getPoint();
-			pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
-			pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
-			dragged.setLocation(pos);
 			
-			repaint();
-			System.out.print("p");
+			if(getComponentAt(offset) == columns)
+			{
+				if(playingField.get(playingField.indexOf(c.getParent())).getLayer(c) != JLayeredPane.DRAG_LAYER)
+					return;
+				CardStack s = (CardStack)c.getParent();
+				if(s.isEmpty() || s.stackType == 2)
+					return;
+				
+				dragged = new CardStack(s.stackType, s.width);
+				dragged.addCard(c);
+				s.removeCard(c);
+				dragged.old = s;
+				playingField.add(dragged);
+				
+				jlp.add(dragged, JLayeredPane.DRAG_LAYER);
+				
+				Point pos = getLocationOnScreen();
+				pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
+				pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
+				dragged.setLocation(pos);
+				
+				repaint();
+				System.out.print("p");
+			}
+			else
+			{
+				Component comp = topRow.getComponent(0);
+				if (comp instanceof CardStack)
+				{
+					if(((CardStack)comp).stackType == 1)
+					{
+						CardStack s = (CardStack)c.getParent();
+						if(s.isEmpty() || s.stackType == 2)
+							return;
+						
+						dragged = new CardStack(s.stackType, s.width);
+						dragged.addCard(c);
+						s.removeCard(c);
+						dragged.old = s;
+						playingField.add(dragged);
+						
+						jlp.add(dragged, JLayeredPane.DRAG_LAYER);
+						
+						Point pos = getLocationOnScreen();
+						pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
+						pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
+						dragged.setLocation(pos);
+						
+						repaint();
+						System.out.print("p");
+					}
+				}
+			}
 		}
 		
 	}
@@ -293,7 +330,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 				r.x = sPos.x;
 				r.y = sPos.y;
 				
-				if(r.contains(mPos) && s.acceptableMove(dragged.pile.get(1)))
+				if(r.contains(mPos) && s.acceptableMove(dragged.pile.get(0)))
 				{
 					s.uniteStacks(dragged);
 					cardDrop = true;

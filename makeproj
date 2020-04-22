@@ -1,0 +1,6 @@
+javac Card.java
+javac Deck.java
+javac CardStack.java
+javac FreeCellGUI.java
+javac FreeCell.java
+

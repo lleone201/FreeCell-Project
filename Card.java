@@ -38,6 +38,7 @@ public class Card extends JPanel {
             e.printStackTrace();
         }
         setSize(100, 145);
+		setPreferredSize(new Dimension(100, 145));
         setOpaque(false);
 
     }

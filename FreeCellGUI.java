@@ -24,6 +24,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.BoxLayout;
 
 
 public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionListener
@@ -31,6 +32,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	JButton[] options;			//Holds the menu of options the player can select
 	Deck deck;				
 	JPanel menuBar;
+	JPanel gameArea;
 	JPanel topRow;
 	JPanel columns;
 	ArrayList<CardStack> freeCells;
@@ -38,11 +40,13 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	ArrayList<CardStack> playingField;
 								//The above correspond to the top left free cells, the top right completed sets of cards, and the main 8 columns where the game is played
 	CardStack dragged;			//When a pile is dragged around, it is added to this
+	JLayeredPane jlp;
 	Point offset;				//Helps properly align where the card will be dragged to
 	
 	public FreeCellGUI()
 	{
-		super("Free Cell Solitaire");
+ 		super("Free Cell Solitaire");
+		setLayout(new BorderLayout());
 		//Adds the bottom menu bar for getting help on playing the game and restarting the game
 		String[] theOptions = new String[]{"Help", "New Game"};
 		options = new JButton[2];
@@ -90,29 +94,51 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			}
 		});
 		
-		menuBar = new JPanel();
-		menuBar.setLayout(new GridLayout(1, 2, getWidth() / 4, 0));
+		gameArea = new JPanel();
+		gameArea.setOpaque(false);
+		gameArea.setLayout(new BoxLayout(gameArea, BoxLayout.PAGE_AXIS));
+		
+		menuBar = new JPanel(new GridLayout(0,2));
 		menuBar.add(options[0]);
 		menuBar.add(options[1]);
 		add(menuBar, BorderLayout.SOUTH);
 		
 		//Adds the free cells and foundations to the game board
-		topRow = new JPanel();
-		topRow.setLayout(new FlowLayout(FlowLayout.LEFT));
-		add(topRow, BorderLayout.NORTH);
+		FlowLayout tFlow = new FlowLayout(FlowLayout.CENTER);
+		tFlow.setAlignOnBaseline(true);
+		topRow = new JPanel(tFlow);
+		add(topRow, FlowLayout.LEFT);
+		topRow.setOpaque(true);
+		topRow.setVisible(true);
+		topRow.setSize(new Dimension(2160, 150));
+		topRow.setBackground(Color.red);
+		gameArea.add(topRow);
+		//topRow.setBackground(new Color(30, 80, 25));
 		
 		//Adds the main game area, where the cards are laid out into 8 columns
-		columns = new JPanel();
-		columns.setLayout(new FlowLayout(FlowLayout.CENTER));
-		add(columns, BorderLayout.CENTER);
+		FlowLayout flow = new FlowLayout(FlowLayout.CENTER);
+		flow.setAlignOnBaseline(true);
+		columns = new JPanel(flow);
+		columns.setOpaque(true);
+		columns.setMinimumSize(new Dimension(200, 900));
+		columns.setBackground(Color.blue);
+		gameArea.add(columns);
+		columns.setVisible(true);
+		//columns.setBackground(new Color(30, 80, 25));
 		
 		//Other changes to the JFrame, such as the background color, are done here
+		jlp = getLayeredPane();
+		add(gameArea);
+		playingField = new ArrayList<CardStack>();
+		freeCells = new ArrayList<CardStack>();
+		homeCells = new ArrayList<CardStack>();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 		deck = new Deck();
-		setMinimumSize(new Dimension(900, 600));
+		setMinimumSize(new Dimension(1080, 720));
 		setBackground(new Color(30, 80, 25));
-		gameStart();
+		gameStart(); 
+		
 	}
 	
 	public void gameReset()	//Called to reset the game
@@ -125,49 +151,47 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	
 	public void gameStart() //Called to start the game, whether for the first time or after a reset
 	{
-		int j;
-		CardStack s = new CardStack(0, 120);
+		int temp;
+		CardStack[] s = new CardStack[8];
+		Card card;
 		topRow.removeAll();
 		columns.removeAll();
 		
-		for(Card i : deck.cards)
-		{
-			i.addMouseListener(this);
-			i.addMouseMotionListener(this);
-		}
-		
 		for(int i = 0; i < 8; i++)
 		{
-			s = new CardStack(0, 120);
+			s[i] = new CardStack(0, 120);
 			if(i < 4)
-				j = 7;
+				temp = 7;
 			else
-				j = 6;
-			for(; j > 0; j--)
+				temp = 6;
+			
+			for(int j = 0; j < temp; j++)
 			{
-				Card card = deck.drawCard();
-				System.out.printf("%s ", card.toString());
-				s.add(card);
+				card = deck.drawCard();
+				card.addMouseListener(this);
+				card.addMouseMotionListener(this);
+				s[i].addCard(card);
 			}
-			playingField.add(s);
-			columns.add(s);
+			playingField.add(s[i]);
+			columns.add(s[i]);
+			System.out.println(s[i]);
 		}
 		
-		for(int i = 0; i < 8; i++)
+ 		for(int i = 0; i < 8; i++)
 		{
-			if(i < 3)
-				s = new CardStack(1, 120);	
-			else if(i == 3)
-				s = new CardStack(1, 240);	//The last of the free cells is wider to create space between them and the home cells
+			if(i < 4)
+				s[i] = new CardStack(1, 120);	
 			else
-				s = new CardStack(2, 120);
+				s[i] = new CardStack(2, 120);
+			
+			s[i].add(new Card("blank", 2));
 			
 			if(i < 4)
-				freeCells.add(s);
+				freeCells.add(s[i]);
 			else
-				homeCells.add(s);
+				homeCells.add(s[i]);
 			
-			topRow.add(s);
+			topRow.add(s[i]);
 		}
 		
 		validate();
@@ -193,6 +217,8 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			offset = e.getPoint();
 			pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
 			pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
+			dragged.setLocation(pos);
+			System.out.print("d");
 		}
 		repaint();
 	}
@@ -211,32 +237,33 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	
 	@Override
 	public void mousePressed(MouseEvent e)
-	{
-		if(e.getComponent() instanceof CardStack)
+	{		
+		if(e.getComponent() instanceof Card)
 		{
-			int idx = playingField.indexOf((CardStack)e.getComponent());
-			if(e.getComponent() instanceof Card)
-			{
-				Card c = (Card)e.getComponent();
-				if(playingField.get(idx).getLayer(c) != JLayeredPane.DRAG_LAYER)
-					return;
-				
-				CardStack s = (CardStack)c.getParent();
-				if(s.isEmpty() || s.stackType == 2)
-					return;
-				
-				dragged = new CardStack(s.stackType, s.width);
-				dragged = s.splitStack(c);
-				
-				Point pos = getLocationOnScreen();
-				offset = e.getPoint();
-				pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
-				pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
-				
-				dragged.setLocation(pos);
-				
-				repaint();
-			}
+			Card c = (Card)e.getComponent();
+			
+			if(playingField.get(playingField.indexOf(c.getParent())).getLayer(c) != JLayeredPane.DRAG_LAYER)
+				return;
+			CardStack s = (CardStack)c.getParent();
+			if(s.isEmpty() || s.stackType == 2)
+				return;
+			
+			dragged = new CardStack(s.stackType, s.width);
+			dragged.addCard(c);
+			s.removeCard(c);
+			dragged.old = s;
+			playingField.add(dragged);
+			
+			jlp.add(dragged, JLayeredPane.DRAG_LAYER);
+			
+			Point pos = getLocationOnScreen();
+			offset = e.getPoint();
+			pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
+			pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
+			dragged.setLocation(pos);
+			
+			repaint();
+			System.out.print("p");
 		}
 		
 	}
@@ -282,6 +309,8 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			
 			if(winCondition())
 				JOptionPane.showMessageDialog(this, "Congratulations!");
+			
+			System.out.print("r");
 		}
 	}
 	

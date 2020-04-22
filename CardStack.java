@@ -1,10 +1,10 @@
 import java.util.ArrayList;
+import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JLayeredPane;
 
 public class CardStack extends JLayeredPane
 {
-	Card bottom;			//The first card added to a stack will always be this one, which is blank
 	ArrayList<Card> pile;
 	int stackType;			//If 0, a regular stack; if 1, a free cell(top left stack); if 2, a home cell (top right stack)
 	public int width, height;	//The horizontal and vertical lengths of the pane when added to the game
@@ -14,10 +14,8 @@ public class CardStack extends JLayeredPane
 	
 	public CardStack(int t, int w)
 	{
-		bottom = new Card("blank", 0);
 		pile = new ArrayList<Card>();
-		pile.add(bottom);
-		offset = 0;				//The first non-blank card in a pile is directly on top of the blank card
+		offset = 20;				//The first non-blank card in a pile is directly on top of the blank card
 		stackType = t;
 		width = w;
 		if(stackType == 1)
@@ -28,20 +26,19 @@ public class CardStack extends JLayeredPane
 			capacity = 52;
 	}
 	
-	public void add(Card c)
+	public void addCard(Card c)
 	{
 		c.setLocation(0, offset * pile.size());
 		pile.add(c);
 		this.add(c, 1, 0);
-		if(pile.size() == 2 && stackType == 0)
-			offset = 21;	//After the first non-blank card is added, the offset is updated
+/* 		if(pile.size() == 2 && stackType == 0)
+			offset = 15;	//After the first non-blank card is added, the offset is updated */
 		resize();
 	}
 	
-	public void remove(Card c)
+	public void removeCard(Card c)
 	{
 		pile.remove(c);
-		this.remove(c);
 		resize();
 	}
 	
@@ -49,27 +46,25 @@ public class CardStack extends JLayeredPane
 	{
 		height = 145;
 		if(pile.size() != 0)
-			height += offset * (pile.size() - 2);
-		this.setSize(width, height);
-		for(int i = 0; i < pile.size(); i++)
+			height += offset * (pile.size());
+		this.setPreferredSize(new Dimension(width, height));
+/* 		for(int i = 0; i < pile.size(); i++)
 			putLayer(pile.get(i), DEFAULT_LAYER);
-		putLayer(pile.get(pile.size() - 1), DRAG_LAYER);
+		putLayer(pile.get(pile.size() - 1), DRAG_LAYER); */
 	}
 	
 	public boolean isEmpty()
 	{
-		return pile.size() - 1 == 0;
+		return pile.size() == 0;
 	}
 	
  	public CardStack splitStack(Card first)
 	{
 		CardStack temp = new CardStack(stackType, 100);
-		for(int i = pile.indexOf(first); i < pile.size();)
+		for(int i = pile.indexOf(first); i < pile.size(); i++)
 		{
-			temp.add(pile.get(i));
-			remove(pile.get(i));
-			if(temp.pile.size() == 1)
-				temp.offset = 21;
+			temp.addCard(pile.get(i));
+			removeCard(pile.get(i));
 		}
 		
 		temp.old = this;
@@ -78,9 +73,9 @@ public class CardStack extends JLayeredPane
 	
 	public void uniteStacks(CardStack p)
 	{
-		for(Card c : p.pile)
+		for(int i = 0; i < p.pile.size(); i++)
 		{
-			add(c);
+			addCard(p.pile.get(i));
 		}
 		resize();
 	}
@@ -102,7 +97,7 @@ public class CardStack extends JLayeredPane
 		switch(stackType)
 		{
 			case 0:			//If the card stack is empty, the card can be added; if not, the card must be 1 higher and the alternate color
-				if(pile.size() == 1)
+				if(isEmpty())
 					return true;
 				else
 				{
@@ -117,22 +112,41 @@ public class CardStack extends JLayeredPane
 					return false;
 				else
 					return true;
-			case 2:			//The card can be added if the home cell is empty and it is an ace; if not, the card must be 1 higher and the same suit
+			case 2:				//The card can be added if the home cell is empty and it is an ace; if not, the card must be 1 higher and the same suit
+				if(isEmpty() && c.value == 14)
+					return true;
 				if(pile.size() == c.value)
 				{
-					if(pile.size() == 1)
+					if(pile.get(1).suit.equals(c.suit))
 						return true;
 					else
-					{
-						if(pile.get(2).suit.equals(c.suit))
-							return true;
-						else
-							return false;
-					}
+						return false;
 				}
 					
 		}
 		return false;
+	}
+	
+	@Override
+	public Component.BaselineResizeBehavior getBaselineResizeBehavior() {
+	    return Component.BaselineResizeBehavior.CONSTANT_ASCENT;
+	}
+	
+	@Override
+	public int getBaseline(int width, int height) {
+	    return 0;
+	}
+	
+	public String toString()
+	{
+		String result = new String();
+		for(int i = 0; i < pile.size(); i++)
+		{
+			result += pile.get(i).toString() + " ";
+		}
+		
+		result += "\n";
+		return result;
 	}
 	
 }

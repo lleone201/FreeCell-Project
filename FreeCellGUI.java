@@ -224,10 +224,13 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
 			pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
 			dragged.setLocation(pos);
-			dragged.setVisible(true);
-			dragged.setOpaque(true);
+			jlp.setVisible(true);
+			jlp.setOpaque(true);
+				
+
 		}
-		repaint();
+		jlp.revalidate();
+		jlp.repaint();
 	}
 	
 	@Override
@@ -265,15 +268,17 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 				playingField.add(dragged);
 				
 				jlp.add(dragged, JLayeredPane.DRAG_LAYER);
+				add(jlp);
 				
 				Point pos = getLocationOnScreen();
 				pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
 				pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
 				dragged.setLocation(pos);
-				dragged.setVisible(true);
-				dragged.setOpaque(true);
+				jlp.setVisible(true);
+				jlp.setOpaque(true);
 				
-				repaint();
+				jlp.revalidate();
+				jlp.repaint();
 			}
 			else
 			{
@@ -298,6 +303,11 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 						pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
 						pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
 						dragged.setLocation(pos);
+						jlp.setVisible(true);
+						jlp.setOpaque(true);
+						
+						jlp.revalidate();
+						jlp.repaint();
 						
 						repaint();
 					}
@@ -343,6 +353,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			if(cardDrop == false)
 				dragged.old.uniteStacks(dragged);
 			
+			jlp.remove(dragged);
 			dragged = null;
 			repaint();
 			

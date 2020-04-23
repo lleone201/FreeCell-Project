@@ -38,7 +38,7 @@ public class Card extends JPanel {
             e.printStackTrace();
         }
         setSize(100, 145);
-		setPreferredSize(new Dimension(100, 145));
+        setPreferredSize(new Dimension(100, 145));
         setOpaque(false);
 
     }
@@ -86,20 +86,25 @@ public class Card extends JPanel {
     public void flipToBack() {
         this.faceDown = true;
     }
-	
-	public boolean getColor()
-	{
-		if(suit == "hearts" || suit == "diamonds")
-			return false;
-		else
-			return true;
-		
-	}
 
-    public String toString() {		//The first card that is added to the stack is blank rather than having a particular suit
-		if(this.suit == "blank")
-			return "blank";
-		else
-			return this.getValAsString() + " of " + this.suit;
+    public boolean getColor() {
+        if (suit == "hearts" || suit == "diamonds")
+            return false;
+        else
+            return true;
+
+    }
+
+    public String toString() { // The first card that is added to the stack is blank rather than having a
+                               // particular suit
+        if (this.suit == "blank")
+            return "blank";
+        else
+            return this.getValAsString() + " of " + this.suit;
     }
 }
+
+// Credit to Cristy94 on GitHub, that is where I got most of the images for the
+// cards.
+// Also credit to Blizzard Entertainment because I used an image of a
+// Hearthstone card as the blank spaces

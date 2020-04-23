@@ -10,7 +10,7 @@ public class Deck {
         return cards.size();
     }
 
-    public static void shuffleDeck(ArrayList<Card> cards) {
+    public void shuffleDeck() {
         // Uses the Collections.shuffle method to shuffle up the deck and get the cards
         // in randomized order
         Collections.shuffle(cards);
@@ -36,14 +36,14 @@ public class Deck {
                 suit = "clubs";
             } else if (i == 2) {
                 suit = "spades";
-            } else if (i == 4) {
+            } else if (i == 3) {
                 suit = "diamonds";
             }
             for (int j = 2; j <= 14; ++j) {
                 cards.add(new Card(suit, j));
             }
         }
-        shuffleDeck(cards);
+        shuffleDeck();
     }
 
 }

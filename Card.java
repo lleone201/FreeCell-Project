@@ -87,8 +87,13 @@ public class Card extends JPanel {
         this.faceDown = true;
     }
 	
-	public boolean getColor() {
-		return isBlack;
+	public boolean getColor()
+	{
+		if(suit == "hearts" || suit == "diamonds")
+			return false;
+		else
+			return true;
+		
 	}
 
     public String toString() {		//The first card that is added to the stack is blank rather than having a particular suit

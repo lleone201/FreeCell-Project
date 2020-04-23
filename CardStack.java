@@ -47,7 +47,7 @@ public class CardStack extends JLayeredPane
 		height = 145;
 		if(stackType != 0)
 			height = 160;
-		height += offset * (pile.size());
+		height += offset * (pile.size()) * 2;
 		this.setPreferredSize(new Dimension(width, height));
  		for(int i = 0; i < pile.size(); i++)
 			setLayer(pile.get(i), DEFAULT_LAYER, 0);
@@ -100,56 +100,33 @@ public class CardStack extends JLayeredPane
 		switch(stackType)
 		{
 			case 0:			//If the card stack is empty, the card can be added; if not, the card must be 1 higher and the alternate color
-				if(isEmpty())
+				if(pile.size() == 1)
 					return true;
 				else
 				{
 					topCard = peekTop();
-					if(topCard.getColor() != c.getColor() && topCard.value + 1 == c.value)
-					{
-						System.out.println(1);
+					if(topCard.getColor() != c.getColor() && topCard.value - 1 == c.value)
 						return true;
-					}
 					else
-					{
-						System.out.println(2);
 						return false;
-					}
 				}
 			case 1:			//If the free cell is empty, the card can be added
-				if(pile.size() == capacity)
-				{
-					System.out.println(3);
+				if(pile.size() - 1 == capacity)
 					return false;
-				}
 				else
-				{
-					System.out.println(4);
 					return true;
-				}
 			case 2:				//The card can be added if the home cell is empty and it is an ace; if not, the card must be 1 higher and the same suit
 				if(pile.size() == 1 && c.value == 14)
-				{
-					System.out.println(5);
 					return true;
-				}
-				if(pile.size() == c.value)
+				else if(pile.size() == c.value)
 				{
 					
 					if(pile.get(1).suit.equals(c.suit))
-					{
-						System.out.println(6);
 						return true;
-					}
-					else
-					{
-						System.out.println(7);
-						return false;
-					}
 				}
-					
+				else
+					return false;					
 		}
-		System.out.println(8);
 		return false;
 	}
 	

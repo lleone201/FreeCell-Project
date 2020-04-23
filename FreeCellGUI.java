@@ -48,6 +48,25 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 	public FreeCellGUI()
 	{
  		super("Free Cell Solitaire");
+		setMinimumSize(new Dimension(1080, 720));
+		setMaximumSize(new Dimension(1080, 720));
+		gameStart();
+	}
+	
+	public void gameReset()	//Called to reset the game
+	{
+		menuBar.removeAll();
+		gameArea.removeAll();
+		topRow.removeAll();
+		columns.removeAll();
+		freeCells.removeAll(freeCells);
+		homeCells.removeAll(homeCells);
+		playingField.removeAll(playingField);
+		gameStart();
+	}
+	
+	public void gameStart() //Called to start the game, whether for the first time or after a reset
+	{
 		setLayout(new BorderLayout());
 		//Adds the bottom menu bar for getting help on playing the game and restarting the game
 		String[] theOptions = new String[]{"Help", "New Game"};
@@ -113,9 +132,8 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		topRow.setOpaque(true);
 		topRow.setVisible(true);
 		topRow.setSize(new Dimension(2160, 150));
-		topRow.setBackground(Color.red);
 		gameArea.add(topRow);
-		//topRow.setBackground(new Color(30, 80, 25));
+		topRow.setBackground(new Color(30, 80, 25));
 		
 		//Adds the main game area, where the cards are laid out into 8 columns
 		FlowLayout flow = new FlowLayout(FlowLayout.CENTER);
@@ -123,10 +141,9 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		columns = new JPanel(flow);
 		columns.setOpaque(true);
 		columns.setMinimumSize(new Dimension(200, 900));
-		columns.setBackground(Color.blue);
 		gameArea.add(columns);
 		columns.setVisible(true);
-		//columns.setBackground(new Color(30, 80, 25));
+		columns.setBackground(new Color(30, 80, 25));
 		
 		//Other changes to the JFrame, such as the background color, are done here
 		jlp = getLayeredPane();
@@ -137,22 +154,7 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 		deck = new Deck();
-		setMinimumSize(new Dimension(1080, 720));
-		setBackground(new Color(30, 80, 25));
-		gameStart(); 
 		
-	}
-	
-	public void gameReset()	//Called to reset the game
-	{
-		deck = new Deck();
-		
-		gameStart();
-		repaint();
-	}
-	
-	public void gameStart() //Called to start the game, whether for the first time or after a reset
-	{
 		int temp;
 		CardStack[] s = new CardStack[8];
 		Card card;
@@ -219,11 +221,11 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 		if(dragged != null)
 		{
 			Point pos = getLocationOnScreen();
-			offset = e.getPoint();
 			pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
 			pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
 			dragged.setLocation(pos);
-			System.out.print("d");
+			dragged.setVisible(true);
+			dragged.setOpaque(true);
 		}
 		repaint();
 	}
@@ -268,9 +270,10 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 				pos.x = e.getLocationOnScreen().x - pos.x - offset.x;
 				pos.y = e.getLocationOnScreen().y - pos.y - offset.y;
 				dragged.setLocation(pos);
+				dragged.setVisible(true);
+				dragged.setOpaque(true);
 				
 				repaint();
-				System.out.print("p");
 			}
 			else
 			{
@@ -297,7 +300,6 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 						dragged.setLocation(pos);
 						
 						repaint();
-						System.out.print("p");
 					}
 				}
 			}
@@ -347,7 +349,6 @@ public class FreeCellGUI extends JFrame implements MouseListener, MouseMotionLis
 			if(winCondition())
 				JOptionPane.showMessageDialog(this, "Congratulations!");
 			
-			System.out.print("r");
 		}
 	}
 	
